@@ -1,4 +1,5 @@
 import os
+import time
 from tkinter import *
 from tkinter import messagebox
 import easygui
@@ -19,6 +20,7 @@ class TelaSitema:
     
     def __init__(self) -> None:
         self.root = root
+        self.db = DataBase()
         self.imagem_layout()
         self.lista_comp_validacao()
         self.tela()
@@ -158,6 +160,7 @@ class TelaSitema:
         self.bt_pesq_dir_saida.place(x=306, y=216, width=34, height=21)
         self.bt_salvar_config.place(x=224, y=260, width=153, height=30)
         self.componentes_botoes_principais()
+        self.carregar_dados_config()
 
     def componentes_usuario(self):
         self.lista_comp_validacao()
@@ -203,6 +206,7 @@ class TelaSitema:
         self.ver_senha.place(x=459, y=151, width=33, height=30)
         self.bt_salvar_usuario.place(x=217, y=211, width=153, height=30)
         self.componentes_botoes_principais()
+        self.carregar_dados_usuario()
 
     def componentes_tela_inicial(self):
         self.lista_comp_validacao()
@@ -220,7 +224,8 @@ class TelaSitema:
                             activebackground=COLOR_BT_SECUNDA,
                             activeforeground="#ffffff",
                             cursor='hand2',
-                            justify='center')
+                            justify='center',
+                            command=lambda:self.consultar_etiquetas())
 
         self.bt_exp_arquivo = Button(self.root,
                             text='EXPORTAR\n ARQUIVO',
@@ -231,7 +236,8 @@ class TelaSitema:
                             activebackground=COLOR_BT_SECUNDA,
                             activeforeground="#ffffff",
                             cursor='hand2',
-                            justify='center')
+                            justify='center',
+                            command=lambda:self.exportar_arquivo())
 
         self.bt_consultar.place(x=61, y=136, width=156, height=118)
         self.bt_exp_arquivo.place(x=362, y=136, width=156, height=118)
@@ -294,50 +300,119 @@ class TelaSitema:
 
     def verifica_pasta(self, diretorio):
         if os.path.isdir(diretorio):
-            return False
+            return True
         else:
             messagebox.showerror('Erro de pasta','Pasta não localizada')
-            return True
+            return False
 
-    def arquivo_atual(self, nomeArquivo, diretorio, indice: int = 1):
-        l_arquivos = os.listdir(diretorio)
-        l_datas = []
+    def arquivo_atual(self, nomeArquivo, diretorio):
 
-        for arquivo in l_arquivos:
-            if nomeArquivo in arquivo:
-                data = os.path.getmtime(os.path.join(os.path.realpath(diretorio), arquivo))
-                l_datas.append((data, arquivo))
-        try:
-            l_datas.sort(reverse=True)
-            ult_arquivo = l_datas[0]
-            nome_arquivo = ult_arquivo[1]
-            data_arquivo = ult_arquivo[0]
-            arq = os.path.join(os.path.realpath(diretorio), nome_arquivo)
-            data_mod = self.data_modificacao(arq)
-            return nome_arquivo, data_mod
-        except:
-            messagebox.showerror('Erro de Arquivo''Nenhum arquivo Localizado.')
-            return 
+
+        if self.verifica_pasta(diretorio):
+            l_arquivos = os.listdir(diretorio)
+            l_datas = []
+            for arquivo in l_arquivos:
+                if nomeArquivo in arquivo:
+
+                    data = os.path.getmtime(os.path.join(os.path.realpath(diretorio), arquivo))
+                    l_datas.append((data, arquivo))
+            try:
+                l_datas.sort(reverse=True)
+                ult_arquivo = l_datas[0]
+                nome_arquivo = ult_arquivo[1]
+                data_arquivo = ult_arquivo[0]
+                arq = os.path.join(os.path.realpath(diretorio), nome_arquivo)
+                data_mod = self.data_modificacao(arq)
+                
+                return [nome_arquivo, data_mod, arq]
+            except:
+                messagebox.showerror('Erro de Arquivo','Nenhum arquivo Localizado.')
+                return 
 
     #ações botoes
     def salvar_configuracoes(self):
         if self.valida_campos_vazios(self.valida_comp_config):
-            ...
+            self.variaveis_config()
+
+            sql ="""UPDATE tb_config SET diretorio ='{}', nome_arq ='{}', dir_saida ='{}',nome_arq_saida ='{}' WHERE id = 1
+            """.format(self.v_diretorio, self.v_nome_arquivo, self.v_dir_saida, self.v_nome_arq_saida)
+            self.db.update(sql)
 
     def salvar_usuario(self):
         if self.valida_campos_vazios(self.valida_comp_usuario):
-            ...
+            self.variaveis_usuario()
+
+            sql ="""UPDATE tb_usuario SET usuario ='{}', senha = '{}' WHERE id = 1
+            """.format(self.v_usuario, self.v_senha)
+            self.db.update(sql)
 
     def consultar_etiquetas(self):
         #pegar dados do banco usuario
+        dados_usuario = self.db.mostra_dados('tb_usuario')
+        usuario = dados_usuario[0][1]
+        senha = dados_usuario[0][2]
+
         #pegar dados de diretorio
-        ...
+        dados_diretorio = self.db.mostra_dados('tb_config')
+        diretorio = dados_diretorio[0][1]
+        arquivo = dados_diretorio[0][2]
 
-    def exportar_arquivo(self, dados: list):
+        valida_local = self.arquivo_atual(arquivo, diretorio)
+
+        if valida_local:
+            arquivo = valida_local[0]
+            data = valida_local[1]
+            caminho = valida_local[2]
+            opc = messagebox.askyesno('Arquivo Selecionado', f"""Arquivo selecionado!!!\n
+            Nome arquivo: {arquivo}\n
+            Data Mod: {data}\n
+            Dir: {caminho}\n\n
+            Continuar processo!?""")
+
+            if opc:
+                print('PROCESSO REALIZADO')
+        
+    def exportar_arquivo(self, dados: list = []):
         #pegar dados diretorio
-        #salvar arquivo
-        ...
+        dados_diretorio = self.db.mostra_dados('tb_config')
+        diretorio = dados_diretorio[0][3]
+        arquivo = dados_diretorio[0][4]
 
+        if self.verifica_pasta(diretorio):
+            messagebox.showinfo('msg', 'Pasta verificada')
+
+        #salvar arquivo
+        
+
+    #dados
+    def carregar_dados_config(self):
+        try:
+            dados = self.db.mostra_dados('tb_config')
+            self.var_diretorio.set(dados[0][1])
+            self.var_nome_arquivo.set(dados[0][2])
+            self.var_dir_saida.set(dados[0][3])
+            self.var_nome_arq_saida.set(dados[0][4])
+        except:
+            pass
+
+    def carregar_dados_usuario(self):
+        try:
+            dados = self.db.mostra_dados('tb_usuario')
+            self.var_usuario.set(dados[0][1])
+            self.var_senha.set(dados[0][2])
+        except:
+            pass
+            
+    def data_modificacao(self, arquivo):
+
+            ti_m = os.path.getmtime(arquivo) 
+            
+            m_ti = time.ctime(ti_m) 
+            t_obj = time.strptime(m_ti) 
+            T_stamp = time.strftime("%d/%m/%Y %H:%M:%S", t_obj) 
+            
+            # print(f"The file located at the path {arquivo} was last modified at {T_stamp}")
+            return T_stamp
 
 
 if __name__ == '__main__':

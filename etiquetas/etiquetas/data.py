@@ -47,7 +47,7 @@ class DataBase:
         finally:
             self.conn.close()
 
-    def update_(self, stringSQL):
+    def update(self, stringSQL):
         try:
             self.connect_bd()
             self.cursor.execute(stringSQL)
