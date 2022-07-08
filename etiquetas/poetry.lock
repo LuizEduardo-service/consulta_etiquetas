@@ -116,6 +116,14 @@ python-versions = "*"
 db = "*"
 
 [[package]]
+name = "easygui"
+version = "0.98.3"
+description = "EasyGUI is a module for very simple, very easy GUI programming in Python.  EasyGUI is different from other GUI generators in that EasyGUI is NOT event-driven.  Instead, all GUI interactions are invoked by simple function calls."
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "engineering-notation"
 version = "0.6.0"
 description = "Easy engineering notation"
@@ -434,7 +442,7 @@ h11 = ">=0.9.0,<1"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "e0bb47b3d076d66725ba6cbec78ceb6de6c062a8c5d4a4317edf68067ebebd8d"
+content-hash = "8d4e0ebd83775f8f937cbb6a726fe8264e046d167e2c077015586510b9d4311b"
 
 [metadata.files]
 antiorm = [
@@ -468,6 +476,10 @@ db = [
 ]
 db-sqlite3 = [
     {file = "db-sqlite3-0.0.1.tar.gz", hash = "sha256:4dd410aa28a2c5b66de477f9dc62f523133217dd31c7ed7eb085214bea148db9"},
+]
+easygui = [
+    {file = "easygui-0.98.3-py2.py3-none-any.whl", hash = "sha256:33498710c68b5376b459cd3fc48d1d1f33822139eb3ed01defbc0528326da3ba"},
+    {file = "easygui-0.98.3.tar.gz", hash = "sha256:d653ff79ee1f42f63b5a090f2f98ce02335d86ad8963b3ce2661805cafe99a04"},
 ]
 engineering-notation = [
     {file = "engineering_notation-0.6.0-py3-none-any.whl", hash = "sha256:1ea1e450d575b4804723d0711b0609d2711dffac2f4b5548ee632c16a636d9f6"},
