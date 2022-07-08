@@ -52,7 +52,7 @@ class DataBase:
             self.connect_bd()
             self.cursor.execute(stringSQL)
             self.conn.commit()
-            messagebox.showinfo('Atualização', 'Atualização realizada com Sucesso!')
+            messagebox.showinfo('Atualização ', 'Atualização realizada com Sucesso!')
         except:
             messagebox.showerror('Erro Atualização', 'Não foi possivel alterar os dados!\nVerifique a conexão e tente novamente')
         finally:
