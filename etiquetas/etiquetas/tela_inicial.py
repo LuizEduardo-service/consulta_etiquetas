@@ -4,6 +4,7 @@ from tkinter import messagebox
 import easygui
 from os.path import getmtime
 from glob import iglob
+from etiquetas.data import DataBase
 
 root = Tk()
 COLOR_BT_PRIMARIO = '#FFA051'
