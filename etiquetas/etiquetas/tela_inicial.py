@@ -6,6 +6,7 @@ import easygui
 from os.path import getmtime
 from glob import iglob
 from etiquetas.data import DataBase
+from etiquetas.consulta_etiqueta import ConsultaEtiqueta
 
 root = Tk()
 COLOR_BT_PRIMARIO = '#FFA051'
@@ -370,7 +371,8 @@ class TelaSitema:
             Continuar processo!?""")
 
             if opc:
-                print('PROCESSO REALIZADO')
+                self.consulta = ConsultaEtiqueta(usuario, senha)
+                status = self.consulta.start()
         
     def exportar_arquivo(self, dados: list = []):
         #pegar dados diretorio
