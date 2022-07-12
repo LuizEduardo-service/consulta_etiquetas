@@ -2,7 +2,7 @@ import os
 import time
 from tkinter import *
 from tkinter import messagebox
-import easygui
+from tkinter.filedialog import askdirectory
 from os.path import getmtime
 from glob import iglob
 from etiquetas.data import DataBase
@@ -32,13 +32,15 @@ class TelaSitema:
         self.valida_comp_usuario = []
 
     def imagem_layout(self):
-        self.image_config =  PhotoImage(file=r'../image/config.png')   
-        self.image_tela_inicial =  PhotoImage(file=r'../image/telaInicial.png')   
-        self.image_usuario =  PhotoImage(file=r'../image/usuario.png')   
-        self.image_bt_config = PhotoImage(file=r'../image/icon_config.png',width=38, height=38)     
-        self.image_bt_play = PhotoImage(file=r'../image/icon_play.png',width=38, height=38)     
-        self.image_bt_usuario = PhotoImage(file=r'../image/icon_usuario.png',width=38, height=38)
-        self.image_bt_visivel = PhotoImage(file=r'../image/visivel.png',width=30, height=30)
+        self.parentDirectory = os.path.dirname(os.getcwd())
+        dir_image = os.path.join(self.parentDirectory, 'image\\')
+        self.image_config =  PhotoImage(file=dir_image + 'config.png')   
+        self.image_tela_inicial =  PhotoImage(file=dir_image + 'telaInicial.png')   
+        self.image_usuario =  PhotoImage(file=dir_image + 'usuario.png')   
+        self.image_bt_config = PhotoImage(file=dir_image + 'icon_config.png',width=38, height=38)     
+        self.image_bt_play = PhotoImage(file=dir_image + 'icon_play.png',width=38, height=38)     
+        self.image_bt_usuario = PhotoImage(file=dir_image + 'icon_usuario.png',width=38, height=38)
+        self.image_bt_visivel = PhotoImage(file=dir_image + 'visivel.png',width=30, height=30)
 
     def centralizar_tela(self, largura, altura):
         param = []
@@ -58,7 +60,10 @@ class TelaSitema:
         self.root.geometry("%dx%d+%d+%d" % (pos[0],pos[1],pos[2],pos[3]))
         self.componentes_tela_inicial()
         
-        
+    
+
+
+
     def destruir_componentes(self):
         for comp in self.root.winfo_children():
             comp.destroy()
@@ -272,7 +277,7 @@ class TelaSitema:
         return True
 
     def define_diretorio(self, tipo: int) -> str:
-        diretorio = easygui.diropenbox()
+        diretorio = askdirectory()
         if diretorio:
             if tipo == 1:
                 self.var_diretorio.set(diretorio)

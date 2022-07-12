@@ -1,10 +1,14 @@
+import os
 import sqlite3 as sq
 from tkinter import messagebox
 
 class DataBase:
 
     def __init__(self) -> None:
-        self.dbLocal =r'..\data\dataBase.db'
+
+        self.parentDirectory = os.path.dirname(os.getcwd())
+        dir_data = os.path.join(self.parentDirectory, 'data\\')
+        self.dbLocal =dir_data + 'dataBase.db'
         
 
     def connect_bd(self):
